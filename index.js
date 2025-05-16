@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 
 const Product = require('./models/product');
 
+const categories = ['fruits', 'vegetables', 'dairy'];
+
 mongoose.connect('mongodb://127.0.0.1:27017/farmStand')
     .then(()=>{
         console.log(`Connection to mongo Established`)
@@ -22,13 +24,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
 app.get('/products',async (req, res)=>{
+    const {category} = req.query;
+    if (category){
+    const products =await Product.find({category});
+    res.render('products/index', {products, category})
+    }else {
     const products =await Product.find({});
-    console.log(products)
-    res.render('products/index', {products})
+    res.render('products/index', {products , category : 'All'})
+    }
+
 })
 
 app.get('/products/new', (req, res)=>{
-    res.render('products/new');
+    res.render('products/new',{categories});
 })
 
 app.post('/products', async(req,res)=>{
@@ -48,7 +56,7 @@ app.get('/products/:id', async(req, res)=>{
 app.get('/products/:id/edit', async(req, res)=>{
     const { id } = req.params;
     const products = await Product.findById(id);
-    res.render('products/edit', {products});
+    res.render('products/edit', {products, categories});
 })
 
 app.put('/products/:id', async(req, res)=>{
@@ -56,6 +64,12 @@ app.put('/products/:id', async(req, res)=>{
     console.log(req.body)
     const products = await Product.findByIdAndUpdate(id, req.body,{ runValidators:true, new:true});
     res.redirect(`/products/${products._id}`)
+})
+
+app.delete('/products/:id',async (req, res)=>{
+    const { id } = req.params;
+    const deleteProduct = await Product.findByIdAndDelete(id);
+    res.redirect(`/products`);
 })
 
 app.listen(8080, ()=>{

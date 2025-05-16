@@ -6,15 +6,18 @@
     <title><%= products.name %></title>
 </head>
 <body>
-    <h2><%= products.name %></h2>
+    <h2> <%= products.name %></h2>
     <ul>
-        <li><%= products.price %></li>
-        <li><%= products.category %></li>
+        <li>price : <%= products.price %></li>
+        <li>category : <a href="/products?category=<%= products.category %>"><%= products.category %></a></li>
     </ul>
 
     <a href="/products">back to list</a>
     <a href="/products/<%= products._id %>/edit">edit</a>
 
+    <form action="/products/<%= products._id %>?_method=DELETE" method="post">
+        <button>DELETE</button>
+    </form>
 
 </body>
 </html>

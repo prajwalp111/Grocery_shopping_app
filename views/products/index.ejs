@@ -6,11 +6,19 @@
     <title>Document</title>
 </head>
 <body>
+    <h2><%= category %> Products</h2>
+
     <ul>
     <% for (let product of products) { %>
     
         <li><a href="/products/<%= product._id %>"><%= product.name %></a></li>
     
     <% } %></ul>
+
+        <a href="/products/new">Add new</a>
+
+    <% if (category !== 'ALL') {%>
+        <a href="/products">Back to home</a>
+    <% } %>
 </body>
 </html>
