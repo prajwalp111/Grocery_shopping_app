@@ -2,12 +2,10 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const methodOverride = require('method-override');
-
 const mongoose = require('mongoose');
-
 const Product = require('./models/product');
-
 const categories = ['fruits', 'vegetables', 'dairy'];
+const AppError = require('./AppError')
 
 mongoose.connect('mongodb://127.0.0.1:27017/farmStand')
     .then(()=>{
@@ -46,22 +44,31 @@ app.post('/products', async(req,res)=>{
     res.redirect(`/products/${newProd._id}`)
 })
 
-app.get('/products/:id', async(req, res)=>{
+app.get('/products/:id', async(req, res, next)=>{
     const { id } = req.params;
     const products = await Product.findById(id);
+    if(!products){
+        return next(new AppError('the product doesnt exist ', 404));
+    }
     console.log(products)
     res.render('products/show', {products})
 })
 
-app.get('/products/:id/edit', async(req, res)=>{
+app.get('/products/:id/edit', async(req, res, next)=>{
     const { id } = req.params;
     const products = await Product.findById(id);
+    if(!products){
+        return next(new AppError('the product doesnt exist ', 404));
+    }
     res.render('products/edit', {products, categories});
 })
 
 app.put('/products/:id', async(req, res)=>{
     const { id } = req.params;
     console.log(req.body)
+    if(!products){
+        return next(AppError('the product doesnt exist ', 404));
+    }
     const products = await Product.findByIdAndUpdate(id, req.body,{ runValidators:true, new:true});
     res.redirect(`/products/${products._id}`)
 })
@@ -70,6 +77,12 @@ app.delete('/products/:id',async (req, res)=>{
     const { id } = req.params;
     const deleteProduct = await Product.findByIdAndDelete(id);
     res.redirect(`/products`);
+})
+
+app.use((err, req, res, next)=>{
+    const { status=500, message="this can't be happening ERRRROOOORRRRRRR!!!!!"} =  err;
+    res.status(status).send(message);
+
 })
 
 app.listen(8080, ()=>{
