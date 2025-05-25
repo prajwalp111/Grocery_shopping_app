@@ -37,18 +37,23 @@ app.get('/products/new', (req, res)=>{
     res.render('products/new',{categories});
 })
 
-app.post('/products', async(req,res,next)=>{
-    try{
+function wrapAsync(fn){
+    return function(req, res, next){
+        fn(req, res, next).catch(e =>{
+            next(e);
+        })
+    }
+}
+
+app.post('/products', wrapAsync(async(req,res,next)=>{
+
         const newProd = new Product(req.body);
         await newProd.save();
         res.redirect(`/products/${newProd._id}`)
-    }catch(e){
-        next(e)
-    }
-})
+}))
 
-app.get('/products/:id', async(req, res, next)=>{
-    try{
+app.get('/products/:id', wrapAsync(async(req, res, next)=>{
+
         const { id } = req.params;
         const products = await Product.findById(id);
         if(!products){
@@ -56,35 +61,42 @@ app.get('/products/:id', async(req, res, next)=>{
         }
         console.log(products)
         res.render('products/show', {products})
-    }catch(e){
-        next(e)
-    }
-})
 
-app.get('/products/:id/edit', async(req, res, next)=>{
-    try{
+}))
+
+app.get('/products/:id/edit', wrapAsync(async(req, res, next)=>{
+
         const { id } = req.params;
         const products = await Product.findById(id);
         if(!products){
             throw new AppError('the product doesnt exist ', 404);
         }
         res.render('products/edit', {products, categories});
-    }catch(e){
-        next(e);
-    }
-})
 
-app.put('/products/:id', async(req, res)=>{
+}))
+
+app.put('/products/:id',wrapAsync( async(req, res)=>{
     const { id } = req.params;
     console.log(req.body)
     const products = await Product.findByIdAndUpdate(id, req.body,{ runValidators:true, new:true});
     res.redirect(`/products/${products._id}`)
-})
+}))
 
-app.delete('/products/:id',async (req, res)=>{
+app.delete('/products/:id',wrapAsync(async (req, res)=>{
     const { id } = req.params;
     const deleteProduct = await Product.findByIdAndDelete(id);
     res.redirect(`/products`);
+}))
+
+function handleError(err){
+    console.dir(err);
+    return new AppError(`ValidationError.........${err}`,400)
+}
+
+app.use((err, req, res, next)=>{
+    console.log(err.name);
+    if(err.name === 'ValidationError') err = handleError(err)
+    next(err);
 })
 
 app.use((err, req, res, next)=>{
