@@ -37,38 +37,46 @@ app.get('/products/new', (req, res)=>{
     res.render('products/new',{categories});
 })
 
-app.post('/products', async(req,res)=>{
-    const newProd = new Product(req.body);
-    await newProd.save();
-    console.log(newProd);
-    res.redirect(`/products/${newProd._id}`)
+app.post('/products', async(req,res,next)=>{
+    try{
+        const newProd = new Product(req.body);
+        await newProd.save();
+        res.redirect(`/products/${newProd._id}`)
+    }catch(e){
+        next(e)
+    }
 })
 
 app.get('/products/:id', async(req, res, next)=>{
-    const { id } = req.params;
-    const products = await Product.findById(id);
-    if(!products){
-        return next(new AppError('the product doesnt exist ', 404));
+    try{
+        const { id } = req.params;
+        const products = await Product.findById(id);
+        if(!products){
+            throw new AppError('the product doesnt exist ', 404);
+        }
+        console.log(products)
+        res.render('products/show', {products})
+    }catch(e){
+        next(e)
     }
-    console.log(products)
-    res.render('products/show', {products})
 })
 
 app.get('/products/:id/edit', async(req, res, next)=>{
-    const { id } = req.params;
-    const products = await Product.findById(id);
-    if(!products){
-        return next(new AppError('the product doesnt exist ', 404));
+    try{
+        const { id } = req.params;
+        const products = await Product.findById(id);
+        if(!products){
+            throw new AppError('the product doesnt exist ', 404);
+        }
+        res.render('products/edit', {products, categories});
+    }catch(e){
+        next(e);
     }
-    res.render('products/edit', {products, categories});
 })
 
 app.put('/products/:id', async(req, res)=>{
     const { id } = req.params;
     console.log(req.body)
-    if(!products){
-        return next(AppError('the product doesnt exist ', 404));
-    }
     const products = await Product.findByIdAndUpdate(id, req.body,{ runValidators:true, new:true});
     res.redirect(`/products/${products._id}`)
 })
