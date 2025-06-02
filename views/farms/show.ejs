@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= farms.name %></title>
+</head>
+<body>
+    <h2> <%= farms.name %></h2>
+    <ul>
+        <li>City : <%= farms.city %></li>
+        <li>Email : <%= farms.email %></li>
+    </ul>
+
+    <a href="/farms">back to All farm list</a>
+    <a href="/farms/<%= farms._id %>/products/new">Add new Product</a>
+    <a href="/farms/<%= farms._id %>/edit">edit</a>
+
+
+</body>
+</html>

@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Add Products</title>
 </head>
 <body>
     <h1>Enter new Item</h1>
-    <form action="/products" method="post">
+    <form action="/farms/<%= id %>/products" method="post">
         <label for="name">Enter the item</label>
         <input type="text" name="name" id="name" placeholder="Enter item name">
         <label for="price">Enter amount</label>
@@ -21,8 +21,8 @@
         </select>
         <button>Submit</button>
     </form>
-    <a href="/products">back to list</a>
-
+    <a href="/products">back to Products list</a>
+    <a href="/farms">back to farms list</a>
         
 
 </body>
