@@ -10,6 +10,7 @@
     <ul>
         <li>price : <%= products.price %></li>
         <li>category : <a href="/products?category=<%= products.category %>"><%= products.category %></a></li>
+        <li>farm : <a href="/farms/<%= products.farms._id %>"><%= products.farms.name%></a></li>
     </ul>
 
     <a href="/products">back to list</a>

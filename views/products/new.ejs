@@ -6,8 +6,9 @@
     <title>Add Products</title>
 </head>
 <body>
-    <h1>Enter new Item</h1>
-    <form action="/farms/<%= id %>/products" method="post">
+    <h1><%= farm.name %></h1>
+    <h2>Add a product</h2>
+    <form action="/farms/<%= farm._id %>/products" method="post">
         <label for="name">Enter the item</label>
         <input type="text" name="name" id="name" placeholder="Enter item name">
         <label for="price">Enter amount</label>

@@ -6,16 +6,24 @@
     <title><%= farms.name %></title>
 </head>
 <body>
-    <h2> <%= farms.name %></h2>
+    <h1> <%= farms.name %></h1>
     <ul>
         <li>City : <%= farms.city %></li>
         <li>Email : <%= farms.email %></li>
     </ul>
+    <h2>Products</h2>
+    <ul>
+        
+        <% for(let product of farms.products){ %>
+            <li><a href="/products/<%= product._id %>"><%= product.name %></a></li>
+        <% } %>
+    </ul>
 
-    <a href="/farms">back to All farm list</a>
+    <a href="/farms">back to All farm list</a><br>
     <a href="/farms/<%= farms._id %>/products/new">Add new Product</a>
-    <a href="/farms/<%= farms._id %>/edit">edit</a>
-
+    <form action="/farms/<%= farms._id %>?_method=DELETE" method="post">
+        <button>DELETE</button>
+    </form>
 
 </body>
 </html>
