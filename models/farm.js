@@ -23,9 +23,9 @@ const farmSchema = new Schema({
 })
 
 farmSchema.post('findOneAndDelete', async function(farms){
-    
+    console.log(farms.products)
     if(farms.products.length){
-        console.log('hello')
+        
         const res = await Product.deleteMany({_id: {$in : farms.products}})
         console.log(res)
     }
